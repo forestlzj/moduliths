@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 the original author or authors.
+ * Copyright 2017-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,9 @@ import static org.assertj.core.api.Assertions.*;
 
 import lombok.RequiredArgsConstructor;
 
-import java.lang.reflect.Method;
-
 import org.junit.jupiter.api.Test;
 import org.moduliths.events.EventPublication;
 import org.moduliths.events.EventPublicationRegistry;
-import org.moduliths.events.PublicationTargetIdentifier;
 import org.moduliths.events.config.EnablePersistentDomainEvents;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -33,7 +30,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
-import org.springframework.util.ReflectionUtils;
 
 /**
  * @author Oliver Gierke
@@ -47,15 +43,9 @@ class PersistentDomainEventIntegrationTest {
 		context.register(ApplicationConfiguration.class, InfrastructureConfiguration.class);
 		context.refresh();
 
-		Method method = ReflectionUtils.findMethod(SecondTxEventListener.class, "on", DomainEvent.class);
-
 		try {
 
 			context.getBean(Client.class).method();
-
-		} catch (Throwable e) {
-
-			System.out.println(e);
 
 		} finally {
 
@@ -63,9 +53,6 @@ class PersistentDomainEventIntegrationTest {
 					.findIncompletePublications();
 
 			assertThat(eventsToBePublished).hasSize(1);
-			assertThat(eventsToBePublished).allSatisfy(it -> {
-				assertThat(it.getTargetIdentifier()).isEqualTo(PublicationTargetIdentifier.forMethod(method));
-			});
 
 			context.close();
 		}

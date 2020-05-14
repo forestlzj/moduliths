@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 the original author or authors.
+ * Copyright 2017-2020 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,8 @@
 package org.moduliths.events.config;
 
 import org.moduliths.events.EventPublicationRegistry;
-import org.moduliths.events.support.CompletionRegisteringBeanPostProcessor;
 import org.moduliths.events.support.MapEventPublicationRegistry;
 import org.moduliths.events.support.PersistentApplicationEventMulticaster;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,10 +33,5 @@ class EventPublicationConfiguration {
 
 		return new PersistentApplicationEventMulticaster(
 				() -> registry.getIfAvailable(() -> new MapEventPublicationRegistry()));
-	}
-
-	@Bean
-	static CompletionRegisteringBeanPostProcessor bpp(ObjectFactory<EventPublicationRegistry> store) {
-		return new CompletionRegisteringBeanPostProcessor(() -> store.getObject());
 	}
 }
